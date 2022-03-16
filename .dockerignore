@@ -1,7 +1,3 @@
-
-# python cache
 __pycache__
-
-# cdn path
 cdn/photos/*
 !cdn/photos/.gitkeep

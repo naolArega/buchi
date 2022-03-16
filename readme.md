@@ -17,3 +17,10 @@ after the dependencies are installed, run the package.
 ```
 python main.py
 ```
+### Test
+
+for test `pytest` can be use. to perform a test run `pytest`
+
+### Deployement
+
+to deploy run `docker-compose up`

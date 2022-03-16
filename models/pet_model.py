@@ -9,7 +9,7 @@ class PetModel(BaseModel):
     gender: str = Field(...)
     size: str = Field(...)
     age: str = Field(...)
-    photo: list[str] = Body([])
+    photos: list[dict[str, str]] = Body([])
     good_with_children: bool = Field(...)
 
     class Config:
@@ -22,7 +22,12 @@ class PetModel(BaseModel):
                 "gender": "male",
                 "size": "small",
                 "age": 5,
-                "photo": ["Binary file"],
+                "photos": [
+                    {
+                        "data": "Base64 data",
+                        "extension": "png"
+                    }
+                ],
                 "good_with_children": True
             }
         }
