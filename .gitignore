@@ -1,6 +1,7 @@
 
 # python cache
 __pycache__
+.pytest_cache
 
 # cdn path
 cdn/photos/*
