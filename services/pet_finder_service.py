@@ -1,24 +1,28 @@
+from datetime import datetime, timedelta
 import aiohttp
 from decouple import config
 from fastapi.encoders import jsonable_encoder
 from core.buchi_exception import BuchiException
 
 pet_finder_api = "https://api.petfinder.com/v2"
-bearer_token = None
+token_type = ""
+token = ""
+token_expiration_date = datetime.now()
 
-async def get_pet_finder_pets(limit, type, gender, size, age, good_with_children):
+async def get_pet_finder_pets(limit, type, gender, size, age, good_with_children):    
+    global token
     animal_endpoint = f"{pet_finder_api}/animals"
     query_parameters = generate_query_string(limit, type, gender, size, age, good_with_children)
+    if token == "" or datetime.now() >= token_expiration_date :
+        await get_token()
+    headers = {
+        "Authorization": f"{token_type} {token}"
+    }
     try:
-        if bearer_token == None:
-            bearer_token = await get_token()
-        headers = {
-            "Authorization": f"Bearer {bearer_token}"
-        }
         async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get(f"{animal_endpoint}{query_parameters}") as response:
                 if response.status == 401:
-                    bearer_token = None
+                    token = ""
                     return None
                 elif response.status != 200 and response.status == 401:
                     return None
@@ -28,6 +32,9 @@ async def get_pet_finder_pets(limit, type, gender, size, age, good_with_children
         return None
 
 async def get_token():
+    global token_type
+    global token
+    global token_expiration_date
     token_endpoint = f"{pet_finder_api}/oauth2/token"
     api_key = config("PETFINDER_API_KEY")
     client_secret = config("PETFINDER_CLIENT_SECRET")
@@ -36,13 +43,15 @@ async def get_token():
         "client_id": api_key,
         "client_secret": client_secret
     }
-    try:
+    try:        
         async with aiohttp.ClientSession() as session:
             async with session.post(token_endpoint, data=form_data) as response:
                 if response.status != 200:
                     return None           
                 token_response = jsonable_encoder(await response.json())
-                return token_response["access_token"]
+                token_type = token_response["token_type"]
+                token = token_response["access_token"]
+                token_expiration_date = datetime.now() + timedelta(seconds=token_response["expires_in"])
     except:
         raise BuchiException("Unable to get token")
 
@@ -52,15 +61,16 @@ def map_pet_finder_response(pets):
     if pets != None:
         for pet in pets:
             pet_finder_pets.append({
-                "_id": pet["id"],
-                "type": pet["type"],
-                "gender": pet["gender"],
-                "size": pet["size"], 
-                "age": pet["age"],
-                "good_with_children": pet["good_with_children"],
-                "photos": map_photos(pet["photos"]),
+                "pet_id": pet.get("id", 0),
+                "type": pet.get("type", "Cat"),
+                "gender": pet.get("gender", "male"),
+                "size": pet.get("size", "small"), 
+                "age": pet.get("age", "baby"),
+                "good_with_children": pet.get("good_with_children", True),
+                "photos": map_photos(pet.get("photos", [])),
                 "source": "petfinder"
             })
+    return pet_finder_pets
 
 def map_photos(photos):
     normalized_photos = []

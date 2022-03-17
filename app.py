@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from routers import pet_router, customer_router, adoption_router, report_router
 
-app = FastAPI()
+app = FastAPI(title="Buchi", version="1.0.0 beta", description="Buchi, a pet discovery and adoption platform")
 
 @app.get("/")
 def index():

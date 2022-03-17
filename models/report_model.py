@@ -1,7 +1,7 @@
 from datetime import date
 from pydantic import BaseModel, Field
 
-class CustomerModel(BaseModel):
+class ReportModel(BaseModel):
     from_date: date = Field(...)
     to_date: date = Field(...)
 
@@ -10,7 +10,7 @@ class CustomerModel(BaseModel):
         arbitrary_types_allowed = True
         schema_extra = {
             "example": {
-                "from_date": "March 22, 2022",
-                "to_date": "April 12, 2022"
+                "from_date": "2022-03-16",
+                "to_date": "2022-03-16"
             }
         }

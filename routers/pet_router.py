@@ -26,7 +26,7 @@ async def get_pets(
     type: str = None,
     gender: str = None,
     size: str = None,
-    age: int = None,
+    age: str = None,
     good_with_children: bool = None):
     try:
         pets = await find_pets(limit, type, gender, size, age, good_with_children)

@@ -1,9 +1,9 @@
 from bson import ObjectId
 from pydantic import BaseModel, Field
-from core.py_object_id import PyObjectId
+from core.mogodb_object_id import MongoDBObjectId
 
 class CustomerModel(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: MongoDBObjectId = Field(default_factory=MongoDBObjectId, alias="_id")
     name: str = Field(...)
     phone: str = Field(...)
 

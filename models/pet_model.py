@@ -1,15 +1,14 @@
-from fastapi import Body
 from bson import ObjectId
 from pydantic import BaseModel, Field
-from core.py_object_id import PyObjectId
+from core.mogodb_object_id import MongoDBObjectId
 
 class PetModel(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: MongoDBObjectId = Field(default_factory=MongoDBObjectId, alias="_id")
     type: str = Field(...)
     gender: str = Field(...)
     size: str = Field(...)
     age: str = Field(...)
-    photos: list[dict[str, str]] = Body([])
+    photos: list[dict[str, str]] = Field(...)
     good_with_children: bool = Field(...)
 
     class Config:
@@ -18,13 +17,13 @@ class PetModel(BaseModel):
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "type": "Jane Doe",
+                "type": "Cat",
                 "gender": "male",
-                "size": "small",
-                "age": 5,
+                "size": "medium",
+                "age": "baby",
                 "photos": [
                     {
-                        "data": "Base64 data",
+                        "data": "in base64",
                         "extension": "png"
                     }
                 ],

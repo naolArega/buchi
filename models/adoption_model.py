@@ -1,13 +1,13 @@
 from datetime import date
 from bson import ObjectId
 from pydantic import BaseModel, Field
-from core.py_object_id import PyObjectId
+from core.mogodb_object_id import MongoDBObjectId
 
-class CustomerModel(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+class AdoptionModel(BaseModel):
+    id: MongoDBObjectId = Field(default_factory=MongoDBObjectId, alias="_id")
     customer_id: str = Field(...)
     pet_id: str = Field(...)
-    _request_date: date = date.today()
+    request_date: date = Field(date.today())
 
     class Config:
         allow_population_by_field_name = True
@@ -15,7 +15,7 @@ class CustomerModel(BaseModel):
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "name": "Jane Doe",
-                "phone": "0911121314"
+                "customer_id": "6231bdaf6d92a353a4b905c2",
+                "pet_id": "6231bdd56d92a353a4b905c3"
             }
         }
