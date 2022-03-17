@@ -1,3 +1,6 @@
 __pycache__
 cdn/photos/*
-!cdn/photos/.gitkeep
+.gitkeep
+.gitignore
+.git
+.pytest_cache
