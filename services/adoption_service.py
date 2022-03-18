@@ -1,6 +1,6 @@
-from core import mongodb
 import pymongo
-from datetime import date, timedelta
+from core import mongodb
+from datetime import date
 from services.pet_service import find_pet
 from core.buchi_exception import BuchiException
 from services.customer_service import find_customer
@@ -33,27 +33,6 @@ async def find_adoption_requests(from_date: date, to_date: date):
         return remove_request_date_and_id(adoption_requests)
     except:
         raise BuchiException("unable to fetch adoptions requests")
-
-async def get_weekly_adoption_request(from_date: str, to_date: str):
-    try:        
-        start_date = date.fromisoformat(from_date)
-        to_date = date.fromisoformat(to_date)
-        end_date = to_date
-        weekly_adoption_request_reports = {}
-        while start_date < to_date:
-            days_until_last_date = (to_date - start_date).days
-            if days_until_last_date < 7:
-                end_date = start_date + timedelta(days=days_until_last_date)
-            else:
-                end_date = start_date + timedelta(days=7)
-            adoption_request_count = await adoptions_collection.count_documents({
-                "request_date": {'$gte': start_date.isoformat(), '$lte': end_date.isoformat()}
-            })
-            weekly_adoption_request_reports.update({start_date.isoformat(): adoption_request_count})
-            start_date = end_date
-        return weekly_adoption_request_reports
-    except:
-        raise BuchiException("unable to generate weekly adoption requests")
 
 def remove_request_date_and_id(adoption_requests: list):
     cleanded_adoption_requests = []
