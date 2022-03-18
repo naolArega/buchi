@@ -61,7 +61,7 @@ def map_pet_finder_response(pets):
     if pets != None:
         for pet in pets:
             pet_finder_pets.append({
-                "pet_id": pet.get("id", 0),
+                "pet_id": pet.get("id", "0"),
                 "type": pet.get("type", "Cat"),
                 "gender": pet.get("gender", "male"),
                 "size": pet.get("size", "small"), 

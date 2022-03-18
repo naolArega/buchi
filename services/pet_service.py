@@ -1,9 +1,9 @@
-import os
 import aiofiles
 from hashlib import md5
+from pathlib import Path
 from core import mongodb
 from decouple import config
-from base64 import b64decode
+from base64 import decodebytes
 from core.buchi_exception import BuchiException
 from services.pet_finder_service import get_pet_finder_pets
 
@@ -18,8 +18,6 @@ async def insert_pet(pet: dict):
             raise BuchiException("photo doesn't include data or extension")
         try:
             url = await save_photo(photo['data'], photo['extension'])
-            if url == None:
-                raise Exception()
         except:
             raise BuchiException("Unable to save photo to the database, please check if you send a correct photo format.")
         photo_urls.append({"url": url})
@@ -50,17 +48,6 @@ async def find_pet(id: str):
     except:
         raise BuchiException("unable to fetch pet")
 
-async def get_adopted_pet_types():
-    try:        
-        pet_report = {}
-        distinct_pets_types = await pets_collection.distinct("type")
-        for type in distinct_pets_types:
-            pet_count = await pets_collection.count_documents({"type": type})
-            pet_report.update({type: pet_count})
-        return pet_report
-    except:
-        raise BuchiException("unable to generate pet report")
-
 def map_local_source(pets_list: list[dict]):
     if pets_list != None:
         local_pets = []
@@ -81,13 +68,13 @@ def pet_search_criterias(type, gender, size, age, good_with_children):
     return criteria
 
 async def save_photo(data: str, extension: str) -> str:
-    binary_data = b64decode(data)
-    md5_checksum = generate_md5(binary_data)
-    file_name = f"{md5_checksum}.{extension}"
-    cdn_path = os.path.abspath('cdn\\photos')
-    try:
-        async with aiofiles.open(f"{cdn_path}\\{file_name}", mode="w") as f:
-            await f.write(binary_data.decode('utf-8'))
+    try:    
+        binary_data = decodebytes(data.encode('utf-8'))
+        md5_checksum = generate_md5(binary_data)
+        file_name = f"{md5_checksum}.{extension}"
+        file_path = Path(f"cdn/photos/{file_name}")
+        async with aiofiles.open(file_path, mode="wb") as file_handle:
+            await file_handle.write(binary_data)
         return generate_photo_url(file_name)
     except:
         return None
