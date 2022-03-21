@@ -10,6 +10,7 @@ from services.pet_finder_service import get_pet_finder_pets
 pets_collection = mongodb.buchi.get_collection('pets')
 host = config("HOST")
 port = config("PORT")
+cdn_url = config("CDN_HOST_URL_PREFIX")
 
 async def insert_pet(pet: dict):
     photo_urls = []
@@ -83,4 +84,5 @@ def generate_md5(data: str):
     return md5(data).hexdigest()
 
 def generate_photo_url(file_name):
-    return f"http://localhost:{port}/cdn/photos/{file_name}"
+    url_prefix = cdn_url.rstrip('/')
+    return f"{url_prefix}/cdn/photos/{file_name}"
