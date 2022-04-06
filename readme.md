@@ -27,5 +27,5 @@ to deploy run `docker-compose up`
 
 ### Documentation
 
-Documentation can be found at [Postman](https://documenter.getpostman.com/view/20052066/UVsMw6h1), [Swagger](http://localhost:8000/docs) or
+Documentation can be found at [Postman](https://documenter.getpostman.com/view/20052066/UVyvuu5F), [Swagger](http://localhost:8000/docs) or
 [ReDoc](http://localhost:8000/redoc) can be used
